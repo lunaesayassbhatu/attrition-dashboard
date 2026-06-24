@@ -66,6 +66,10 @@
   <div class="card full"><div id="chart-churn" style="height:460px"></div></div>
 </div>
 
+<div class="row">
+  <div class="card full"><div id="chart-breakdown" style="height:520px"></div></div>
+</div>
+
 <p class="section-title">All Offices — Detailed Breakdown</p>
 <div style="padding:10px 30px 30px">
   <div class="card">
@@ -177,6 +181,48 @@ function render() {
     yaxis:{automargin:true},
     plot_bgcolor:'white', paper_bgcolor:'white'
   }, {responsive:true});
+
+  // Stacked breakdown chart — top 20 by start headcount
+  const top20b = [...data].sort((a,b) => b.start_headcount - a.start_headcount).slice(0,20).reverse();
+  const depts = top20b.map(d => d.department);
+  Plotly.newPlot('chart-breakdown', [
+    {
+      name: 'Still Active',
+      type: 'bar', orientation: 'h',
+      x: top20b.map(d => d.still_active), y: depts,
+      marker: { color: '#27AE60' },
+      hovertemplate: '<b>%{y}</b><br>Still Active: %{x}<extra></extra>'
+    },
+    {
+      name: 'Internal Transfers',
+      type: 'bar', orientation: 'h',
+      x: top20b.map(d => d.internal_transfers), y: depts,
+      marker: { color: '#4A90D9' },
+      hovertemplate: '<b>%{y}</b><br>Internal Transfers: %{x}<extra></extra>'
+    },
+    {
+      name: 'True Attrition',
+      type: 'bar', orientation: 'h',
+      x: top20b.map(d => d.true_attrition), y: depts,
+      marker: { color: '#C0392B' },
+      hovertemplate: '<b>%{y}</b><br>True Attrition: %{x}<extra></extra>'
+    },
+    {
+      name: 'New Hires',
+      type: 'bar', orientation: 'h',
+      x: top20b.map(d => d.new_hires), y: depts,
+      marker: { color: '#F28E2B' },
+      hovertemplate: '<b>%{y}</b><br>New Hires: %{x}<extra></extra>'
+    }
+  ], {
+    barmode: 'stack',
+    title: { text: 'Top 20 Offices by Headcount — Workforce Movement Breakdown', font: {size:14, color:'#1A3C5E'} },
+    margin: {l:230, r:40, t:50, b:40},
+    xaxis: { title: 'Number of Staff' },
+    yaxis: { automargin: true },
+    legend: { orientation: 'h', y: -0.12 },
+    plot_bgcolor: 'white', paper_bgcolor: 'white'
+  }, {responsive: true});
 
   filterTable();
 }
