@@ -70,6 +70,10 @@
 <div style="padding:10px 30px 30px">
   <div class="card">
     <div class="controls">
+      <select id="period-filter" onchange="switchPeriodFromTable(this.value)" style="font-weight:bold;color:#1A3C5E">
+        <option value="5">5-Year (2021→2026)</option>
+        <option value="3">3-Year (2023→2026)</option>
+      </select>
       <input id="search" type="text" placeholder="&#128269; Search office..." oninput="filterTable()" style="width:220px"/>
       <select id="size-filter" onchange="filterTable()">
         <option value="">All Office Sizes</option>
@@ -116,6 +120,15 @@ function switchPeriod(p, btn) {
   currentPeriod = p;
   document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  document.getElementById('period-filter').value = p;
+  render();
+}
+
+function switchPeriodFromTable(p) {
+  currentPeriod = p;
+  document.querySelectorAll('.btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && p === '5') || (i === 1 && p === '3'));
+  });
   render();
 }
 
